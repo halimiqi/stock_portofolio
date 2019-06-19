@@ -8,7 +8,7 @@ def data_process():
 
 def calculate_mean_std(df):
     # choose the data
-    dfs = df[0:192]
+    dfs = df[1:192]
     #dfs = dfs.iloc[:,1:22]
     mean = dfs.mean()
     var = dfs.var()
@@ -67,14 +67,14 @@ def get_new_df(df, col_idx):
     return
 if __name__ == "__main__":
     df = data_process()
-    dfs = df.iloc[:, 1:22]
+    dfs = df.iloc[:, 22:]
     mean, var, cov = calculate_mean_std(dfs)
     predict_df = df.iloc[192:,22:]
     final_mean_array_x = []
     final_mean_array_y = []
     final_var_array_x = []
     final_var_array_y = []
-    final_target_list = np.arange(0,0.1,max(mean))
+    final_target_list = np.arange(0,max(mean),0.005)
     for I in final_target_list:
         target_r = I
         res = calculate_potofolio(target_r,mean,cov)
@@ -84,19 +84,33 @@ if __name__ == "__main__":
         final_var_array_x.append(np.var(array_x))
         final_mean_array_y.append(np.mean(array_y))
         final_var_array_y.append(np.var(array_y))
-    print("potofolio x:%f"%(rr_x))
-    print("portofolio y:%f"%(rr_y))
+        print("return %f"%(I))
+    print("potofolio x:%f" % (rr_x))
+    print("portofolio y:%f" % (rr_y))
 
 
     # for the question 2
-    sorted = getc1c2(7,2,df,191)
-    temp = sorted +1
-    new_df = df.iloc[:, temp]
-    mean, var, cov = calculate_mean_std(new_df)
-    predict_df = df.iloc[192:,sorted+22]
+    final_c_mean_array_x = []
+    final_c_mean_array_y = []
+    final_c_var_array_x = []
+    final_c_var_array_y = []
+    final_mn_set = []
     target_r = np.mean(mean)
-    res = calculate_potofolio(target_r, mean, cov)
-    y = (1 / 10) * np.ones(10)
-    rr_x, rr_y, array_x, array_y = calculate_prdict(res.x, y, predict_df)
-    print("potofolio x:%f" % (rr_x))
-    print("portofolio y:%f" % (rr_y))
+    for m in range(3,10):
+        for n in range(1,7):
+            sorted = getc1c2(m,n,df,191)
+            temp = sorted +1
+            new_df = df.iloc[:, sorted+22]
+            mean, var, cov = calculate_mean_std(new_df)
+            predict_df = df.iloc[192:,sorted+22]
+            #target_r = np.mean(mean)
+            res = calculate_potofolio(target_r, mean, cov)
+            y = (1 / 10) * np.ones(10)
+            rr_x, rr_y, array_x, array_y = calculate_prdict(res.x, y, predict_df)
+            final_c_mean_array_x.append(np.mean(array_x))
+            final_c_var_array_x.append(np.var(array_x))
+            final_c_mean_array_y.append(np.mean(array_y))
+            final_c_var_array_y.append(np.var(array_y))
+            final_mn_set.append([m,n])
+            print("potofolio x:%f" % (rr_x))
+            print("portofolio y:%f" % (rr_y))
